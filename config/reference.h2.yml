@@ -1,0 +1,34 @@
+# Logging settings
+logging:
+
+  loggers:
+    org.apache.shiro: INFO
+
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  level: INFO
+
+# HTTP-specific options.
+server:
+  applicationConnectors:
+    - type: http
+      port: 8081
+      idleTimeout: 10 seconds
+
+  adminConnectors:
+    - type: http
+      port: 8082
+
+shiro:
+  iniConfigs: ["classpath:shiro_allow_all.ini"]
+
+dataSourceFactory:
+  driverClass: org.h2.Driver
+  user: sa
+  password: sa
+  url: jdbc:h2:/opt/airpal/db #;ignorecase=false;database_to_upper=false
+
+flywayFactory:
+  locations: ["classpath:db.migration.common", "classpath:db.migration.h2"]
+
+# The URL to the Presto coordinator.
+#prestoCoordinator: http://localhost:32768
