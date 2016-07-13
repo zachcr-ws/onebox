@@ -51,6 +51,24 @@ RUN set -x \
   && java -Duser.timezone=UTC -cp ${AIRPAL_HOME}/airpal-*-all.jar \
   com.airbnb.airpal.AirpalApplication db migrate ${AIRPAL_HOME}/reference.yml
 
+# Add hadoop-azure to allow querying data in Azure storage
+# as a workaround for the following PR (before it can be merged):
+#   https://github.com/prestodb/presto-hadoop-apache2/pull/14
+ENV HADOOP_AZURE_URL http://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure/2.7.2/hadoop-azure-2.7.2.jar
+ENV AZURE_STORAGE_URL http://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/2.2.0/azure-storage-2.2.0.jar
+ENV COMMONS_LANG_URL http://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar
+ENV JETTY_UTIL_URL http://repo1.maven.org/maven2/org/mortbay/jetty/jetty-util/6.1.26/jetty-util-6.1.26.jar
+
+ENV HIVE_HADOOP2_HOME $PRESTO_HOME/plugin/hive-hadoop2
+
+RUN set -x \
+    && wget -P "${HIVE_HADOOP2_HOME}" "${HADOOP_AZURE_URL}" \
+    && wget -P "${HIVE_HADOOP2_HOME}" "${AZURE_STORAGE_URL}" \
+    && wget -P "${HIVE_HADOOP2_HOME}" "${COMMONS_LANG_URL}" \
+    && wget -P "${HIVE_HADOOP2_HOME}" "${JETTY_UTIL_URL}"
+
+
+
 # Supervisor
 RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
